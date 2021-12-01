@@ -5,5 +5,5 @@ p(File
   vals.map(&:to_i).sum
 end
   .chunk_while do |x, y|
-    x >= y
+    y <= x
   end.to_a.drop(1).size)
