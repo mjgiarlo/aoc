@@ -12,15 +12,16 @@ class Diagnosticator
   end
 
   def gamma
-    @diagnostics.map { |code| code.chars }
-                .transpose
-                .then do |by_position|
-                  by_position.map do |digits|
-                    digits.max_by { |digit| digits.count(digit) }
-                  end
-                end
-                .join
-                .to_i(2)
+    @diagnostics
+      .map(&:chars)
+      .transpose
+      .then do |by_position|
+        by_position.map do |digits|
+          digits.max_by { |digit| digits.count(digit) }
+        end
+      end
+      .join
+      .to_i(2)
   end
 
   # Turns out bitwise NOT isn't what I thought it was, so instead of using the
