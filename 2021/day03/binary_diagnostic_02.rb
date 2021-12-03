@@ -42,7 +42,7 @@ class Diagnosticator
 
     columns.times do |position|
       filter_value = yield value_count_comparison_by_position(candidates, position)
-      candidates.delete_if { |diagnostic| diagnostic[position] == filter_value }
+      candidates.select! { |diagnostic| diagnostic[position] == filter_value }
 
       return candidates.first.to_i(2) if candidates.size == 1
     end
