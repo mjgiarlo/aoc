@@ -14,53 +14,41 @@ class Diagnosticator
   private
 
   def oxygen_generator
-    # We're using #delete_if to filter the diagnostics down, and that is a
-    # mutator method, so make a copy first.
-    candidates = @diagnostics.dup
-
-    columns.times do |position|
-      most_common_value = most_common_value_by_position(candidates, position)
-      candidates.delete_if { |diagnostic| diagnostic[position] == most_common_value }
-
-      return candidates.first.to_i(2) if candidates.size == 1
+    find_value do |count_comparison|
+      case count_comparison
+      when 0, -1  # There are more 1s or an equal number of 0s and 1s
+        '1'
+      when 1      # There are more 0s
+        '0'
+      end
     end
   end
 
   def carbon_dioxide_scrubber
+    find_value do |count_comparison|
+      case count_comparison
+      when 0, -1  # There are more 1s or an equal number of 0s and 1s
+        '0'
+      when 1      # There are more 0s
+        '1'
+      end
+    end
+  end
+
+  def find_value
     # We're using #delete_if to filter the diagnostics down, and that is a
     # mutator method, so make a copy first.
     candidates = @diagnostics.dup
 
     columns.times do |position|
-      least_common_value = least_common_value_by_position(candidates, position)
-      candidates.delete_if { |diagnostic| diagnostic[position] == least_common_value }
+      filter_value = yield value_count_comparison_by_position(candidates, position)
+      candidates.delete_if { |diagnostic| diagnostic[position] == filter_value }
 
       return candidates.first.to_i(2) if candidates.size == 1
     end
   end
 
-  def least_common_value_by_position(candidates, position)
-    candidates
-      .map(&:chars)
-      .transpose
-      .slice(position)
-      .then do |position_values|
-      # Would have been nice to use #max_by instead of this bit here but,
-      # unfortunately, it doesn't help with our "in case of equal number of 0s
-      # and 1s, return 1" use case; it will return whichever occurs first. The
-      # method does not allow for user-injectable tie-breaking strategies or
-      # a default winning value.
-      return case position_values.count('0') <=> position_values.count('1')
-             when 0, -1  # There are more 1s or an equal number of 0s and 1s
-               '0'
-             when 1      # There are more 0s
-               '1'
-             end
-    end
-  end
-
-
-  def most_common_value_by_position(candidates, position)
+  def value_count_comparison_by_position(candidates, position)
     candidates
       .map(&:chars)
       .transpose
@@ -68,15 +56,10 @@ class Diagnosticator
       .then do |position_values|
         # Would have been nice to use #max_by instead of this bit here but,
         # unfortunately, it doesn't help with our "in case of equal number of 0s
-        # and 1s, return 1" use case; it will return whichever occurs first. The
+        # and 1s, return n" use case; it will return whichever occurs first. The
         # method does not allow for user-injectable tie-breaking strategies or
         # a default winning value.
-        return case position_values.count('0') <=> position_values.count('1')
-               when 0, -1  # There are more 1s or an equal number of 0s and 1s
-                 '1'
-               when 1      # There are more 0s
-                 '0'
-               end
+        position_values.count('0') <=> position_values.count('1')
     end
   end
 
