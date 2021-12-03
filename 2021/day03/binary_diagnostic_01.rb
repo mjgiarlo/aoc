@@ -12,7 +12,7 @@ class Diagnosticator
   end
 
   def gamma
-    @diagnostics.map { |code| code.split('') }
+    @diagnostics.map { |code| code.chars }
                 .transpose
                 .then do |by_position|
                   by_position.map do |digits|
