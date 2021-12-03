@@ -36,7 +36,7 @@ class Diagnosticator
   end
 
   def find_value
-    # We're using #delete_if to filter the diagnostics down, and that is a
+    # We're using #select! to filter the diagnostics down, and that is a
     # mutator method, so make a copy first.
     candidates = @diagnostics.dup
 
