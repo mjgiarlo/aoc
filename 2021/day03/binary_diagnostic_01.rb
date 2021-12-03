@@ -15,11 +15,7 @@ class Diagnosticator
     @diagnostics
       .map(&:chars)
       .transpose
-      .then do |by_position|
-        by_position.map do |digits|
-          digits.max_by { |digit| digits.count(digit) }
-        end
-      end
+      .map { |digits| digits.max_by { |digit| digits.count(digit) } }
       .join
       .to_i(2)
   end
