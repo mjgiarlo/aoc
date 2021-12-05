@@ -1,15 +1,8 @@
-calls = []
-boards = []
-board = nil
-winners = {}
-
 class Board
-  def initialize
-    @rows = []
-  end
-
-  def add_row(row)
-    @rows << Hash[row.map { |value| [value, false] }]
+  def initialize(rows)
+    @rows = rows.map do |row|
+      Hash[row.split.map { |value| [value, false] }]
+    end
   end
 
   def mark(value)
@@ -34,20 +27,14 @@ class Board
   end
 end
 
-File.foreach('input.txt', chomp: true).with_index do |line, i|
-  if i.zero?
-    calls = line.split(',')
-    next
-  end
-
-  if line.empty?
-    board = Board.new
-    boards << board
-    next
-  end
-
-  board.add_row(line.split)
-end
+input = File.open('input.txt')
+calls = input.readline.chomp.split(',')
+boards = input
+           .each(chomp: true)
+           .reject(&:empty?)
+           .each_slice(5)
+           .map { |rows| Board.new(rows) }
+winners = {}
 
 calls.each do |call|
   boards.each do |board|
