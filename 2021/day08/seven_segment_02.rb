@@ -41,43 +41,38 @@ class DisplayDecoder
   end
 
   def index_of(char)
-    ('a'..'g').to_a.index(char)
+    possible_wires.index(char)
+  end
+
+  def possible_wires
+    ('a'..'g').to_a
   end
 
    def possible_mappings_from(signal_patterns)
-    mapping = {}
+    mappings = {}
 
-    if signal_patterns.map(&:size).include?(2)
-      mapping['c'] = mapping['f'] = signal_patterns
+    mappings['c'] = mappings['f'] = signal_patterns
                                       .find { |pattern| pattern.size == 2 }
                                       .chars
-                                      .reject { |char| mapping.values.include?(char) }
-    end
+                                      .reject { |char| mappings.values.include?(char) }
+    mappings['a'] = signal_patterns
+                      .find { |pattern| pattern.size == 3 }
+                      .chars
+                      .reject { |char| mappings.values.include?(char) }
 
-    if signal_patterns.map(&:size).include?(3)
-      mapping['a'] = signal_patterns
-                       .find { |pattern| pattern.size == 3 }
-                       .chars
-                       .reject { |char| mapping.values.include?(char) }
-    end
-
-    if signal_patterns.map(&:size).include?(4)
-      mapping['b'] = mapping['d'] = signal_patterns
+    mappings['b'] = mappings['d'] = signal_patterns
                                       .find { |pattern| pattern.size == 4 }
                                       .chars
-                                      .reject { |char| mapping.values.include?(char) }
-    end
+                                      .reject { |char| mappings.values.include?(char) }
 
-    if signal_patterns.map(&:size).include?(7)
-      mapping['e'] = mapping['g'] = signal_patterns
+    mappings['e'] = mappings['g'] = signal_patterns
                                       .find { |pattern| pattern.size == 7 }
                                       .chars
-                                      .reject { |char| mapping.values.include?(char) }
-    end
+                                      .reject { |char| mappings.values.include?(char) }
 
-    mapping = mapping.sort.map(&:last)
+    mappings = mappings.sort.map(&:last)
 
-    mapping[0].product(*mapping[1..-1]).reject { |candidate| candidate.size != candidate.uniq.size  }
+    mappings[0].product(*mappings[1..-1]).reject { |candidate| candidate.size != candidate.uniq.size  }
    end
 end
 
