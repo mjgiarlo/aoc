@@ -49,6 +49,8 @@ class Node
 end
 
 class Path
+  MAX_SMALL_DUPLICATES = 1
+
   def initialize(*args)
     @nodes = *args
   end
@@ -68,13 +70,12 @@ class Path
   end
 
   def valid?
-    # The only nodes that are allowed to repeat in a path are large ones,
-    # not small ones (including start and end nodes).
+    # Only one small node may occur twice in a path
     @nodes
       .select
       .with_index { |node, i| @nodes.index(node) != i }
-      .uniq
-      .all?(&:large?)
+      .select(&:small?)
+      .size <= MAX_SMALL_DUPLICATES
   end
 end
 
