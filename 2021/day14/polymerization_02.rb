@@ -21,16 +21,15 @@ class PolymerFinder
       @pair_tally = new_pair_tally
     end
 
-    @element_tally = {}
-    @element_tally.default = 0
-    @pair_tally.each { |(char1, char2), count| @element_tally[char1] += count }
-    @element_tally[@template[-1]] += 1
-
     self
   end
 
   def greatest_commonness_distance
-    @element_tally.values.minmax.reverse.reduce(:-)
+    element_tally = {}
+    element_tally.default = 0
+    @pair_tally.each { |(char1, char2), count| element_tally[char1] += count }
+    element_tally[@template[-1]] += 1
+    element_tally.values.minmax.reverse.reduce(:-)
   end
 end
 
