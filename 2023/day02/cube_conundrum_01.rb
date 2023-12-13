@@ -47,7 +47,6 @@ class GameParser
   end
 end
 
-
 p(
   File
     .foreach('input.txt')
